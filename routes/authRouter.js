@@ -20,7 +20,7 @@ router.post("/register", (req, res) => {
     const user = new User({...req.body, password: hash });
     user
         .save()
-        .then((u) => {
+        .then((user) => {
             //kullanıcı kayıt olduğunda token oluşturduk
             const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
             res.header("Authorization", token).json({ accessToken: token }); //token header kısmına yolladık
@@ -44,20 +44,25 @@ router.post("/login", (req, res) => {
 
     User.findOne({ email })
         .then((user) => {
-            const isValid = bcrypt.compareSync(password, user.password);
-            if (!user && !isValid) {
-                res.status(400).send("Invalid email or password");
+            if (!user) {
+                res.status(400).send("Invalid email");
                 return;
             }
 
+            const isValid = bcrypt.compareSync(password, user.password);
+            if (!isValid) {
+                res.status(400).send("Invalid email or password");
+                return;
+            }
+            console.log(user._id);
             const token = jwt.sign({ _id: user._id }, process.env.JWT_CODE);
-
+            console.log(user._id);
             res.header("Authorization", token).json({ accessToken: token });
+            res.json(token);
         })
         .catch(() => {
             res.status(400).send("Invalid email or password");
         });
-    // const isValid = bcrypt.compareSync(password, req.body.password);
 });
 
 module.exports = router;
