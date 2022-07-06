@@ -1,4 +1,3 @@
-const boolean = require("@hapi/joi/lib/types/boolean");
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({

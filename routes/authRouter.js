@@ -23,7 +23,7 @@ router.post("/register", (req, res) => {
         .then((user) => {
             //kullanıcı kayıt olduğunda token oluşturduk
             const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
-            res.header("Authorization", token).json({ accessToken: token }); //token header kısmına yolladık
+            // res.header("Authorization", token).json({ accessToken: token }); //token header kısmına yolladık
             res.json(token);
             //
         })
@@ -58,8 +58,7 @@ router.post("/login", (req, res) => {
 
             const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
             console.log(token);
-            res.header("Authorization", token).json({ accessToken: token });
-            console.log("denem2");
+            // res.header("Authorization", token).json({ accessToken: token });
             res.json(token);
         })
         .catch(() => {
