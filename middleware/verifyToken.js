@@ -38,7 +38,7 @@ function verifyToken(req, res, next) {
         req.userId = decoded._id;
 
         User.findById(req.userId).then((user) => {
-            if (user.role == "admin") {
+            if (user.role) {
                 next();
             } else {
                 res.status(401).send("Invalid token or you have to be admin");

@@ -50,14 +50,16 @@ router.post("/login", (req, res) => {
             }
 
             const isValid = bcrypt.compareSync(password, user.password);
+            console.log(isValid);
             if (!isValid) {
                 res.status(400).send("Invalid email or password");
                 return;
             }
-            console.log(user._id);
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_CODE);
-            console.log(user._id);
+
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
+            console.log(token);
             res.header("Authorization", token).json({ accessToken: token });
+            console.log("denem2");
             res.json(token);
         })
         .catch(() => {
