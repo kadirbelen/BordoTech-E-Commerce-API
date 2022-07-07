@@ -6,6 +6,7 @@ const queryCategoryRouter = require("./routes/category/queryCategoryRouter");
 const commandCategoryRouter = require("./routes/category/commandCategoryRouter");
 const authRouter = require("./routes/authRouter");
 const cardRouter = require("./routes/cardRouter");
+const orderRouter = require("./routes/orderRouter");
 const bodyParser = require("body-parser");
 const authToken = require("./middleware/authToken");
 
@@ -29,6 +30,7 @@ app.use(
     commandProductRouter
 );
 app.use("/card", authToken.verifyToken, cardRouter);
+app.use("/order", authToken.verifyToken, orderRouter);
 
 app.listen(port, function() {
     console.log(`Server running at http://${hostname}:${port}/`);

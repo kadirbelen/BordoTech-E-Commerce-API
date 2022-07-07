@@ -13,20 +13,17 @@ router.post("/addCard", (req, res) => {
         } else {
             console.log("card:", card);
             console.log("products:", card.products);
+
             //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
-            const productIndex = card.products.findIndex((item) => {
-                console.log("item", item.productId.id);
-
-                // console.log("productIDDDDD", productId);
-
-                item.productId == productId;
-            });
+            const productIndex = card.products.findIndex(
+                (item) => item.productId.toString() === productId
+            );
             console.log("productIndex", productIndex);
 
             if (productIndex > -1) {
                 //ürün var aynı ürünün adetini arttırdık
                 const productItem = card.products[productIndex];
-                productItem.amount += 1;
+                productItem.amount += amount;
                 card.products[productIndex] = productItem;
             } else {
                 console.log("productId", req.body.products);
@@ -43,9 +40,10 @@ router.post("/addCard", (req, res) => {
     });
 });
 
-router.get("/getCard/:userId", (req, res) => {
-    console.log(req.params.userId);
-    Card.find({ userId: req.params.userId })
+router.get("/getCard", (req, res) => {
+    console.log(req.userId);
+    Card.find({ userId: req.userId })
+        .populate("products.productId")
         .then((card) => {
             console.log(card);
             res.json(card);
