@@ -21,6 +21,7 @@ router.get("/getByCategoryId/:id", (req, res) => {
     console.log(req.params.id);
     Product.find({ id: req.params.id })
         .then((product) => {
+            console.log(product);
             res.json(product);
         })
         .catch((e) => {

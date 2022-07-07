@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Product = require("./Product");
 
 const UserSchema = new mongoose.Schema({
     userName: { type: String, required: true, min: 3, max: 50 },

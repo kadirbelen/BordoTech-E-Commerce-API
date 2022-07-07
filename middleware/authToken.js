@@ -13,7 +13,13 @@ function verifyToken(req, res, next) {
 
     jwt.verify(token, process.env.JWT_TOKEN, (err, decoded) => {
         req.userId = decoded._id;
+        if (err) res.status(403).json("Token is not valid");
+        next();
+    });
+}
 
+function verifyAndAuthorizationToken(req, res, next) {
+    verifyToken(req, res, () => {
         User.findById(req.userId).then((user) => {
             if (user.role) {
                 next();
@@ -25,4 +31,4 @@ function verifyToken(req, res, next) {
     });
 }
 
-module.exports = verifyToken;
+module.exports = { verifyToken, verifyAndAuthorizationToken };
