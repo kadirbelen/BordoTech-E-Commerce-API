@@ -3,10 +3,13 @@ const Card = require("./Card");
 const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
-    cardItems: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Card",
-    },
+    cardItems: [{
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+        },
+        amount: { type: Number, default: 1 },
+    }, ],
     payType: {
         type: Boolean,
         default: false, //online ödeme
