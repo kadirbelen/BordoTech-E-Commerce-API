@@ -6,11 +6,14 @@ const queryCategoryRouter = require("./routes/category/queryCategoryRouter");
 const commandCategoryRouter = require("./routes/category/commandCategoryRouter");
 const authRouter = require("./routes/authRouter");
 const cardRouter = require("./routes/cardRouter");
-const orderRouter = require("./routes/orderRouter");
+const queryOrderRouter = require("./routes/order/queryOrderRouter");
+const commandOrderRouter = require("./routes/order/commandOrderRouter");
+
 const bodyParser = require("body-parser");
 const authToken = require("./middleware/authToken");
-
+const emailSend = require("./middleware/emailSend");
 const connection = require("./database/dbConnection");
+const router = require("./routes/authRouter");
 
 const port = 3000;
 const hostname = "127.0.0.1";
@@ -30,7 +33,8 @@ app.use(
     commandProductRouter
 );
 app.use("/card", authToken.verifyToken, cardRouter);
-app.use("/order", authToken.verifyToken, orderRouter);
+app.use("/order", authToken.verifyToken, queryOrderRouter);
+app.use("/order", authToken.verifyToken, commandOrderRouter, emailSend);
 
 app.listen(port, function() {
     console.log(`Server running at http://${hostname}:${port}/`);
