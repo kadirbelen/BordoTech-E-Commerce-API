@@ -14,8 +14,7 @@ router.post("/addOrder", (req, res, next) => {
       });
       order.save();
       res.json(order);
-      req.body = order;
-      next();
+      next(); //mail işlemine git
     })
     .catch((err) => {
       res.json(err);
