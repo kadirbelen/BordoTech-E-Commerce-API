@@ -18,7 +18,7 @@ router.post("/create", (req, res) => {
       console.log("productIndex", productIndex);
 
       if (productIndex > -1) {
-        //ürün var aynı ürünün adetini arttırdık
+        //ürün var olduğu için aynı ürünün adetini arttırdık
         const productItem = card.products[productIndex];
         productItem.amount += amount;
         card.products[productIndex] = productItem;
@@ -51,12 +51,14 @@ router.get("/getCard", (req, res) => {
 });
 
 router.delete("/delete", (req, res) => {
+  //kullanıcıya ait card silindi/temizlendi
   Card.findOneAndDelete({ userId: req.userId })
     .then(() => {
       res.json("kart silindi");
     })
     .catch((err) => {
       console.log(err);
+      res.json(err);
     });
 });
 

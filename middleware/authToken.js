@@ -4,6 +4,7 @@ const User = require("../models/User");
 function verifyToken(req, res, next) {
   const token = req.header("Authorization");
   console.log(token);
+  //token var mı?
   if (!token) {
     res.status(401).send("Access denied. No token provided.");
     return;
