@@ -1,9 +1,15 @@
 const express = require("express");
 const Product = require("../../models/Product");
-
+const productValidate = require("../../validation/productValidate");
 const router = express.Router();
 
 router.post("/create", async(req, res) => {
+    const error = productValidate(req.body);
+
+    if (error) {
+        res.status(400).send(error.details[0].message);
+        return;
+    }
     try {
         const product = new Product(req.body);
         await product.save();
