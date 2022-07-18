@@ -3,14 +3,13 @@ const Category = require("../../models/Category");
 
 const router = express.Router();
 
-router.get("/getAll", (req, res) => {
-    Category.find()
-        .then((categories) => {
-            res.json(categories);
-        })
-        .catch((err) => {
-            res.json(err);
-        });
+router.get("/getAll", async(req, res) => {
+    try {
+        var category = await Category.find();
+        res.json(category);
+    } catch (error) {
+        res.json(error);
+    }
 });
 
 module.exports = router;

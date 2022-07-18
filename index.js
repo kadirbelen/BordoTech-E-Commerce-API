@@ -22,20 +22,20 @@ app.use(bodyParser.json());
 app.use("/auth", authRouter);
 app.use("/categories", queryCategoryRouter);
 app.use(
-  "/categories",
-  authToken.verifyAndAuthorizationToken,
-  commandCategoryRouter
+    "/categories",
+    authToken.verifyAndAuthorizationToken,
+    commandCategoryRouter
 );
 app.use("/products", queryProductRouter);
 app.use(
-  "/products",
-  authToken.verifyAndAuthorizationToken,
-  commandProductRouter
+    "/products",
+    authToken.verifyAndAuthorizationToken,
+    commandProductRouter
 );
 app.use("/card", authToken.verifyToken, cardRouter);
 app.use("/order", authToken.verifyToken, queryOrderRouter);
 app.use("/order", authToken.verifyToken, commandOrderRouter, emailSend);
 
-app.listen(port, function () {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(port, function() {
+    console.log(`Server running at http://${hostname}:${port}/`);
 });

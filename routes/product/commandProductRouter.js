@@ -3,47 +3,32 @@ const Product = require("../../models/Product");
 
 const router = express.Router();
 
-router.post("/create", (req, res) => {
-  const product = new Product({
-    productTitle: req.body.productTitle,
-    productDescription: req.body.productDescription,
-    productPrice: req.body.productPrice,
-    category: req.body.category,
-  });
-
-  product
-    .save()
-    .then((product) => {
-      res.json(product);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
+router.post("/create", async(req, res) => {
+    try {
+        const product = new Product(req.body);
+        await product.save();
+        res.json(product);
+    } catch (error) {
+        res.json(error);
+    }
 });
 
-router.put("/update/:id", (req, res) => {
-  Product.findByIdAndUpdate(req.params.id, {
-    productTitle: req.body.productTitle,
-    productDescription: req.body.productDescription,
-    productPrice: req.body.productPrice,
-    category: req.body.category,
-  })
-    .then((product) => {
-      res.json(product);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+router.put("/update/:id", async(req, res) => {
+    try {
+        const product = await Product.findByIdAndUpdate(req.params.id, req.body);
+        res.json(product);
+    } catch (error) {
+        res.json(error);
+    }
 });
 
-router.delete("/delete/:id", (req, res) => {
-  Product.findByIdAndRemove(req.params.id)
-    .then(() => {
-      res.json("ürün silindi");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+router.delete("/delete/:id", async(req, res) => {
+    try {
+        await Product.findByIdAndRemove(req.params.id);
+        res.json("ürün silindi");
+    } catch (error) {
+        res.json(error);
+    }
 });
 
 module.exports = router;
