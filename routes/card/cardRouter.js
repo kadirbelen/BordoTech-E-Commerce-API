@@ -1,65 +1,63 @@
 const express = require("express");
 const router = express.Router();
-const Card = require("../../models/Card");
+const Product = require("../../models/Product");
+const { updateOne } = require("../../models/User");
+const User = require("../../models/User");
 
-router.post("/create", (req, res) => {
-  const productId = req.body.products[0].productId;
-  const amount = req.body.products[0].amount;
+router.put("/addItem", async(req, res) => {
+    const productId = req.body.card[0].productId;
+    const amount = req.body.card[0].amount;
 
-  Card.findOne({ userId: req.userId }).then((card) => {
-    if (!card) {
-      //kullanıcın sepeti/kartı yoksa oluştur
-      card = new Card({ ...req.body, userId: req.userId });
-    } else {
-      //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
-      const productIndex = card.products.findIndex(
+    const user = await User.findById(req.userId);
+    //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
+    const productIndex = user.card.findIndex(
         (item) => item.productId.toString() === productId
-      );
-      console.log("productIndex", productIndex);
+    );
 
-      if (productIndex > -1) {
+    const product = await Product.findById(productId);
+
+    if (productIndex > -1) {
         //ürün var olduğu için aynı ürünün adetini arttırdık
-        const productItem = card.products[productIndex];
+        const productItem = user.card[productIndex];
         productItem.amount += amount;
-        card.products[productIndex] = productItem;
-      } else {
-        console.log("productId", req.body.products);
+        productItem.totalPrice += amount * product.productPrice;
+        user.card[productIndex] = productItem;
+    } else {
+        console.log("productId", req.body.card);
 
-        card.products.push({
-          productId: productId,
-          amount: amount,
+        user.card.push({
+            productId: productId,
+            amount: amount,
+            totalPrice: product.productPrice * amount,
         });
-      }
     }
 
-    card.save();
-    res.json(card);
-  });
+    user.save();
+    res.json(user);
 });
 
-router.get("/getCard", (req, res) => {
-  console.log(req.userId);
-  Card.find({ userId: req.userId })
-    .populate("products.productId")
-    .then((card) => {
-      console.log(card);
-      res.json(card);
-    })
-    .catch((e) => {
-      res.json(e);
-    });
+router.get("/getCard", async(req, res) => {
+    console.log(req.userId);
+    const user = await User.findById(req.userId).populate("card.productId");
+    res.json(user);
 });
 
-router.delete("/delete", (req, res) => {
-  //kullanıcıya ait card silindi/temizlendi
-  Card.findOneAndDelete({ userId: req.userId })
-    .then(() => {
-      res.json("kart silindi");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json(err);
-    });
+router.put("/clear", async(req, res) => {
+    const user = await User.findById(req.userId);
+
+    if (req.query.productId) {
+        //spesifik bir elemanı silmek
+        const newCard = user.card.filter(
+            (item) => item.productId.toString() !== req.query.productId
+        );
+        console.log("newCard", newCard);
+        user.card = newCard;
+    } else {
+        //kullanıcıya ait card silindi/temizlendi
+        user.card = [];
+    }
+    user.save();
+    res.json(user);
 });
 
 module.exports = router;
