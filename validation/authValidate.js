@@ -4,11 +4,11 @@ const registerSchema = Joi.object({
     userName: Joi.string().required().min(3).max(255),
     email: Joi.string().required().email().min(6).max(255),
     password: Joi.string().required().min(6).max(255),
-    role: Joi.allow(),
+    role: Joi.allow().required(),
 });
 
 const loginSchema = Joi.object({
-    email: Joi.string().required(),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
 });
 

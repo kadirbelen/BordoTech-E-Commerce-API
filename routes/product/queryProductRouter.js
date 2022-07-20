@@ -1,5 +1,6 @@
 const express = require("express");
 const Product = require("../../models/Product");
+const Category = require("../../models/Category");
 
 const router = express.Router();
 
@@ -10,17 +11,28 @@ router.get("/getAll", async(req, res) => {
         req.query.productName.toString() :
         null;
 
+    const categoryName = req.query.categoryName ?
+        req.query.categoryName.toString() :
+        null;
+
     try {
         var product;
-        if (productName === null) {
-            product = await Product.find()
-                .skip(page * pageSize)
-                .limit(pageSize);
-        } else {
+        if (productName !== null) {
             var regex = new RegExp(productName, "i"); //case sensitive
             product = await Product.find({
                     productTitle: regex,
                 })
+                .skip(page * pageSize)
+                .limit(pageSize);
+        } else if (categoryName !== null) {
+            console.log("name", categoryName);
+            const category = await Category.findOne({ categoryName: categoryName });
+
+            product = await Product.find({ category: category._id })
+                .skip(page * pageSize)
+                .limit(pageSize);
+        } else {
+            product = await Product.find()
                 .skip(page * pageSize)
                 .limit(pageSize);
         }

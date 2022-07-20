@@ -34,7 +34,7 @@ app.use(
 );
 app.use("/card", authToken.verifyToken, cardRouter);
 app.use("/order", authToken.verifyToken, queryOrderRouter);
-app.use("/order", authToken.verifyToken, commandOrderRouter, emailSend);
+app.use("/order", authToken.verifyToken, commandOrderRouter);
 
 app.listen(port, function() {
     console.log(`Server running at http://${hostname}:${port}/`);
