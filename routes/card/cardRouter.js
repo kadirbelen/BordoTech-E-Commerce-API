@@ -4,7 +4,7 @@ const Product = require("../../models/Product");
 const { updateOne } = require("../../models/User");
 const User = require("../../models/User");
 
-router.put("/addItem", async(req, res) => {
+router.patch("/addItem", async(req, res) => {
     const productId = req.body.card[0].productId;
     const amount = req.body.card[0].amount;
 
@@ -31,9 +31,11 @@ router.put("/addItem", async(req, res) => {
             totalPrice: product.productPrice * amount,
         });
     }
+    const updateUser = await User.findByIdAndUpdate(req.userId, user, {
+        new: true,
+    });
 
-    user.save();
-    res.json(user);
+    res.json(updateUser);
 });
 
 router.get("/getCard", async(req, res) => {
@@ -42,7 +44,7 @@ router.get("/getCard", async(req, res) => {
     res.json(user);
 });
 
-router.put("/clear", async(req, res) => {
+router.patch("/clear", async(req, res) => {
     const user = await User.findById(req.userId);
 
     if (req.query.productId) {
@@ -56,8 +58,43 @@ router.put("/clear", async(req, res) => {
         //kullanıcıya ait card silindi/temizlendi
         user.card = [];
     }
-    user.save();
-    res.json(user);
+
+    const updateUser = await User.findByIdAndUpdate(req.userId, user, {
+        new: true,
+    });
+    res.json(updateUser);
 });
 
 module.exports = router;
+
+// router.put("/addItem", async(req, res) => {
+//     const productId = req.body.card[0].productId;
+//     const amount = req.body.card[0].amount;
+
+//     const user = await User.findById(req.userId);
+//     //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
+//     const productIndex = user.card.findIndex(
+//         (item) => item.productId.toString() === productId
+//     );
+
+//     const product = await Product.findById(productId);
+
+//     if (productIndex > -1) {
+//         //ürün var olduğu için aynı ürünün adetini arttırdık
+//         const productItem = user.card[productIndex];
+//         productItem.amount += amount;
+//         productItem.totalPrice += amount * product.productPrice;
+//         user.card[productIndex] = productItem;
+//     } else {
+//         console.log("productId", req.body.card);
+
+//         user.card.push({
+//             productId: productId,
+//             amount: amount,
+//             totalPrice: product.productPrice * amount,
+//         });
+//     }
+
+//     user.save();
+//     res.json(user);
+// });
