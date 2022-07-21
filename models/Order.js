@@ -1,4 +1,3 @@
-const Card = require("./Card");
 const User = require("./User");
 const mongoose = require("mongoose");
 

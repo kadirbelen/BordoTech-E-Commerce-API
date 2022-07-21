@@ -1,15 +1,9 @@
 const express = require("express");
 const Product = require("../../models/Product");
-const productValidate = require("../../validation/productValidate");
+const validate = require("../../middleware/validationControl");
 const router = express.Router();
 
-router.post("/", async(req, res) => {
-    const error = productValidate(req.body);
-
-    if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
-    }
+router.post("/", validate("productSchema"), async(req, res) => {
     try {
         const product = new Product(req.body);
         await product.save();

@@ -1,4 +1,4 @@
-const validation = require("../validation/authValidate");
+const validate = require("../middleware/validationControl");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 require("dotenv/config");
@@ -7,13 +7,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
-router.post("/register", async(req, res) => {
-    const error = validation.registerValidate(req.body);
-
-    if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
-    }
+router.post("/register", validate("registerSchema"), async(req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     try {
@@ -27,16 +21,9 @@ router.post("/register", async(req, res) => {
     }
 });
 
-router.post("/login", async(req, res) => {
+router.post("/login", validate("loginSchema"), async(req, res) => {
     try {
         const { email, password } = req.body;
-
-        const error = validation.loginValidate({ email, password });
-
-        if (error) {
-            res.status(400).send(error.details[0].message);
-            return;
-        }
 
         const user = await User.findOne({ email });
 

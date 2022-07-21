@@ -12,14 +12,4 @@ const loginSchema = Joi.object({
     password: Joi.string().required(),
 });
 
-const registerValidate = (requestBody) => {
-    const { error } = registerSchema.validate(requestBody);
-    return error;
-};
-
-const loginValidate = (res, requestBody) => {
-    const { error } = loginSchema.validate(requestBody);
-    return error;
-};
-
-module.exports = { registerValidate, loginValidate };
+module.exports = { registerSchema, loginSchema };

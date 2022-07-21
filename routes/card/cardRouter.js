@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../../models/Product");
-const { updateOne } = require("../../models/User");
 const User = require("../../models/User");
 
 router.patch("/addItem", async(req, res) => {

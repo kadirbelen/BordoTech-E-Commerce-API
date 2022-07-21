@@ -8,46 +8,50 @@ const emailService = require("../../service/emailService");
 router.post("/", async(req, res) => {
     try {
         const user = await User.findById(req.userId);
-        const order = new Order({
-            cardItems: user.card,
-            userId: req.userId,
-            payType: req.body.payType,
-            address: req.body.address,
-        });
+        if (user.card.length > 0) {
+            const order = new Order({
+                cardItems: user.card,
+                userId: req.userId,
+                payType: req.body.payType,
+                address: req.body.address,
+            });
 
-        var arr = user.card;
-        var productName = null;
-        async function stockSituation(arr) {
-            console.log("isStock çalıştı");
-            for (let index = 0; index < arr.length; index++) {
-                var product = await Product.findById(arr[index].productId);
-                if (product.stock < arr[index].amount) {
-                    productName = product.productTitle;
-                    return false;
+            var arr = user.card;
+            var productName = null;
+            async function stockSituation(arr) {
+                console.log("isStock çalıştı");
+                for (let index = 0; index < arr.length; index++) {
+                    var product = await Product.findById(arr[index].productId);
+                    if (product.stock < arr[index].amount) {
+                        productName = product.productTitle;
+                        return false;
+                    }
                 }
+
+                return true;
             }
 
-            return true;
-        }
+            var hasStock = await stockSituation(arr);
+            console.log("stock", hasStock);
 
-        var hasStock = await stockSituation(arr);
-        console.log("stock", hasStock);
-
-        if (hasStock) {
-            console.log("siparişi onayla");
-            user.card.map(async(item) => {
-                var product = await Product.findById(item.productId);
-                product.stock = product.stock - item.amount;
-                product.save();
-            });
-            order.save();
-            user.card = [];
-            user.save();
-            emailService(req, res);
-            return res.json(order);
+            if (hasStock) {
+                console.log("siparişi onayla");
+                user.card.map(async(item) => {
+                    var product = await Product.findById(item.productId);
+                    product.stock = product.stock - item.amount;
+                    product.save();
+                });
+                order.save();
+                user.card = [];
+                user.save();
+                emailService(req, res);
+                return res.json(order);
+            } else {
+                console.log("sipariş iptali");
+                res.json(`${productName} isimli ürün için istenen adette stok yoktur`);
+            }
         } else {
-            console.log("sipariş iptali");
-            res.json(`${productName} isimli ürün için istenen adette stok yoktur`);
+            res.json("Sepette ürün yok");
         }
     } catch (error) {
         res.json(error);

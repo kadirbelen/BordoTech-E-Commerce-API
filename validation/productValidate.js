@@ -8,7 +8,4 @@ const productSchema = Joi.object({
     category: Joi.allow(),
 });
 
-module.exports = (requestBody) => {
-    const { error } = productSchema.validate(requestBody);
-    return error;
-};
+module.exports = productSchema;
