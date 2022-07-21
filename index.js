@@ -11,7 +11,6 @@ const commandOrderRouter = require("./routes/order/commandOrderRouter");
 
 const bodyParser = require("body-parser");
 const authToken = require("./middleware/authToken");
-const emailSend = require("./middleware/emailSend");
 const connection = require("./database/dbConnection");
 const router = require("./routes/authRouter");
 
@@ -33,8 +32,8 @@ app.use(
     commandProductRouter
 );
 app.use("/card", authToken.verifyToken, cardRouter);
-app.use("/order", authToken.verifyToken, queryOrderRouter);
-app.use("/order", authToken.verifyToken, commandOrderRouter);
+app.use("/orders", authToken.verifyToken, queryOrderRouter);
+app.use("/orders", authToken.verifyToken, commandOrderRouter);
 
 app.listen(port, function() {
     console.log(`Server running at http://${hostname}:${port}/`);

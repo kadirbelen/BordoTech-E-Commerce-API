@@ -4,7 +4,7 @@ const categoryValidate = require("../../validation/categoryValidate");
 
 const router = express.Router();
 
-router.post("/create", async(req, res) => {
+router.post("/", async(req, res) => {
     const error = categoryValidate(req.body);
 
     if (error) {

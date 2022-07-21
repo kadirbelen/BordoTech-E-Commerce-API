@@ -5,7 +5,7 @@ const User = require("../../models/User");
 const Product = require("../../models/Product");
 const emailService = require("../../service/emailService");
 
-router.post("/addOrder", async(req, res) => {
+router.post("/", async(req, res) => {
     try {
         const user = await User.findById(req.userId);
         const order = new Order({

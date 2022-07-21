@@ -4,7 +4,7 @@ const Category = require("../../models/Category");
 
 const router = express.Router();
 
-router.get("/getAll", async(req, res) => {
+router.get("/", async(req, res) => {
     const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
     const page = req.query.page ? parseInt(req.query.page) : 0;
     const productName = req.query.productName ?

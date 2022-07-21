@@ -3,7 +3,7 @@ const Product = require("../../models/Product");
 const productValidate = require("../../validation/productValidate");
 const router = express.Router();
 
-router.post("/create", async(req, res) => {
+router.post("/", async(req, res) => {
     const error = productValidate(req.body);
 
     if (error) {
@@ -19,7 +19,7 @@ router.post("/create", async(req, res) => {
     }
 });
 
-router.put("/update/:id", async(req, res) => {
+router.put("/:id", async(req, res) => {
     try {
         const product = await Product.findByIdAndUpdate(req.params.id, req.body);
         res.json(product);
@@ -28,7 +28,7 @@ router.put("/update/:id", async(req, res) => {
     }
 });
 
-router.delete("/delete/:id", async(req, res) => {
+router.delete("/:id", async(req, res) => {
     try {
         await Product.findByIdAndRemove(req.params.id);
         res.json("ürün silindi");
