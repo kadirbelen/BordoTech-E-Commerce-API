@@ -5,17 +5,17 @@ const Category = require("../../models/Category");
 const router = express.Router();
 
 router.get("/", async(req, res) => {
-    const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
-    const page = req.query.page ? parseInt(req.query.page) : 0;
-    const productName = req.query.productName ?
-        req.query.productName.toString() :
-        null;
-
-    const categoryName = req.query.categoryName ?
-        req.query.categoryName.toString() :
-        null;
-
     try {
+        const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
+        const page = req.query.page ? parseInt(req.query.page) : 0;
+        const productName = req.query.productName ?
+            req.query.productName.toString() :
+            null;
+
+        const categoryName = req.query.categoryName ?
+            req.query.categoryName.toString() :
+            null;
+
         var product;
         if (productName !== null) {
             var regex = new RegExp(productName, "i"); //case sensitive
@@ -38,7 +38,7 @@ router.get("/", async(req, res) => {
         }
         res.json(product);
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -48,7 +48,7 @@ router.get("/:id", async(req, res) => {
         const product = await Product.findOne({ _id: req.params.id });
         res.json(product);
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 

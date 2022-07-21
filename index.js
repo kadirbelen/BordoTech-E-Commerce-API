@@ -13,10 +13,11 @@ const bodyParser = require("body-parser");
 const authToken = require("./middleware/authToken");
 const connection = require("./database/dbConnection");
 const router = require("./routes/authRouter");
+const morgan = require("morgan");
 
 const port = 3000;
 const hostname = "127.0.0.1";
-
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use("/auth", authRouter);
 app.use("/categories", queryCategoryRouter);

@@ -9,7 +9,7 @@ router.post("/", validate("productSchema"), async(req, res) => {
         await product.save();
         res.json(product);
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -18,7 +18,7 @@ router.put("/:id", async(req, res) => {
         const product = await Product.findByIdAndUpdate(req.params.id, req.body);
         res.json(product);
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -27,7 +27,7 @@ router.delete("/:id", async(req, res) => {
         await Product.findByIdAndRemove(req.params.id);
         res.json("ürün silindi");
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 

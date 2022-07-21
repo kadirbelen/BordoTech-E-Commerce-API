@@ -17,7 +17,7 @@ router.post("/register", validate("registerSchema"), async(req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
         res.json({ token: token });
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -41,7 +41,7 @@ router.post("/login", validate("loginSchema"), async(req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
         res.json({ token: token });
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 

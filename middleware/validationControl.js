@@ -5,7 +5,8 @@ module.exports = function(schema) {
         const { error } = validators[schema].validate(req.body);
         if (error) {
             // res.status(400).json(error.details[0].message);
-            res.status(400).json({
+
+            res.status(422).json({
                 error: error.details[0].message,
             });
             return;

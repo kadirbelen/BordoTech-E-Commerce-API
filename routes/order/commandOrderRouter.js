@@ -54,7 +54,7 @@ router.post("/", async(req, res) => {
             res.json("Sepette ürün yok");
         }
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 

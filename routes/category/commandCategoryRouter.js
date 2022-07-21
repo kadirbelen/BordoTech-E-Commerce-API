@@ -12,7 +12,7 @@ router.post("/", validate("categorySchema"), async(req, res) => {
         await category.save();
         res.json(category);
     } catch (error) {
-        res.json(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
