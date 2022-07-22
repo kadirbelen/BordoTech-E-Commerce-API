@@ -8,25 +8,18 @@ router.get("/", async(req, res) => {
     try {
         const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
         const page = req.query.page ? parseInt(req.query.page) : 0;
-        const productName = req.query.productName ?
-            req.query.productName.toString() :
-            null;
-
-        const categoryName = req.query.categoryName ?
-            req.query.categoryName.toString() :
-            null;
 
         var product;
-        if (productName !== null) {
-            var regex = new RegExp(productName, "i"); //case sensitive
+        if (req.query.productName) {
             product = await Product.find({
-                    productTitle: regex,
+                    productTitle: { $regex: new RegExp(req.query.productName, "i") },
                 })
                 .skip(page * pageSize)
                 .limit(pageSize);
-        } else if (categoryName !== null) {
-            console.log("name", categoryName);
-            const category = await Category.findOne({ categoryName: categoryName });
+        } else if (req.query.categoryName) {
+            const category = await Category.findOne({
+                categoryName: req.query.categoryName,
+            });
 
             product = await Product.find({ category: category._id })
                 .skip(page * pageSize)

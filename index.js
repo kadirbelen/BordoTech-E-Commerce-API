@@ -8,7 +8,7 @@ const authRouter = require("./routes/authRouter");
 const cardRouter = require("./routes/card/cardRouter");
 const queryOrderRouter = require("./routes/order/queryOrderRouter");
 const commandOrderRouter = require("./routes/order/commandOrderRouter");
-
+const adminDashboardRouter = require("./routes/admin/userRouter");
 const bodyParser = require("body-parser");
 const authToken = require("./middleware/authToken");
 const connection = require("./database/dbConnection");
@@ -23,15 +23,22 @@ app.use("/auth", authRouter);
 app.use("/categories", queryCategoryRouter);
 app.use(
     "/categories",
-    authToken.verifyAndAuthorizationToken,
+    authToken.verifyAndAuthorizationToken(["admin"]),
     commandCategoryRouter
 );
 app.use("/products", queryProductRouter);
 app.use(
     "/products",
-    authToken.verifyAndAuthorizationToken,
+    authToken.verifyAndAuthorizationToken(["admin"]),
     commandProductRouter
 );
+
+app.use(
+    "/admin/users",
+    authToken.verifyAndAuthorizationToken(["admin"]),
+    adminDashboardRouter
+);
+
 app.use("/card", authToken.verifyToken, cardRouter);
 app.use("/orders", authToken.verifyToken, queryOrderRouter);
 app.use("/orders", authToken.verifyToken, commandOrderRouter);
