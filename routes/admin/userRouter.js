@@ -2,7 +2,6 @@ const express = require("express");
 const User = require("../../models/User");
 const router = express.Router();
 
-//admin
 router.get("/", async(req, res) => {
     try {
         var user;
@@ -19,8 +18,8 @@ router.get("/", async(req, res) => {
     }
 });
 
-//admin
 router.patch("/:id", async(req, res) => {
+    //admin kullanıcının rolünü günceller
     try {
         // console.log("role", req.body.role);
         const user = await User.findByIdAndUpdate(
@@ -33,11 +32,11 @@ router.patch("/:id", async(req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-//admin
+
 router.delete("/:id", async(req, res) => {
     try {
         await User.findByIdAndRemove(req.params.id);
-        res.json("kullanıcı silindi");
+        res.json({ information: "kullanıcı silindi" });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

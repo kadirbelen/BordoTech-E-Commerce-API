@@ -13,7 +13,7 @@ router.post("/", validate("productSchema"), async(req, res) => {
     }
 });
 
-router.put("/:id", async(req, res) => {
+router.put("/:id", validate("productSchema"), async(req, res) => {
     try {
         const product = await Product.findByIdAndUpdate(req.params.id, req.body);
         res.json(product);
@@ -25,7 +25,7 @@ router.put("/:id", async(req, res) => {
 router.delete("/:id", async(req, res) => {
     try {
         await Product.findByIdAndRemove(req.params.id);
-        res.json("ürün silindi");
+        res.json({ information: "ürün silindi" });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

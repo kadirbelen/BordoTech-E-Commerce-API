@@ -1,8 +1,9 @@
+const Product = require("./Product");
 const User = require("./User");
 const mongoose = require("mongoose");
 
-const OrderSchema = new mongoose.Schema({
-    cardItems: [{
+const CardSchema = new mongoose.Schema({
+    products: [{
         productId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
@@ -10,15 +11,6 @@ const OrderSchema = new mongoose.Schema({
         amount: { type: Number, default: 1 },
     }, ],
     totalPrice: { type: Number },
-    payType: {
-        type: String,
-        default: "Online Ödeme",
-        enum: ["Online Ödeme", "Kapıda Ödeme"],
-    },
-    address: {
-        type: String,
-        required: true,
-    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -26,4 +18,4 @@ const OrderSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model("Card", CardSchema);

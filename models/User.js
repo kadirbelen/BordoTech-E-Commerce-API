@@ -6,14 +6,6 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, require: true, min: 6, max: 255, unique: true },
     password: { type: String, required: true, min: 6, max: 1024 },
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
-    card: [{
-        productId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
-        },
-        amount: { type: Number },
-        totalPrice: { type: Number },
-    }, ],
     date: { type: Date, default: Date.now },
 });
 

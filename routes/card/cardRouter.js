@@ -1,41 +1,40 @@
 const express = require("express");
 const router = express.Router();
+const Card = require("../../models/Card");
 const Product = require("../../models/Product");
-const User = require("../../models/User");
 
-router.patch("/addItem", async(req, res) => {
+router.put("/addItem", async(req, res) => {
     try {
-        const productId = req.body.card[0].productId;
-        const amount = req.body.card[0].amount;
+        const productId = req.body.products[0].productId;
+        const amount = req.body.products[0].amount;
 
-        const user = await User.findById(req.userId);
+        const card = await Card.findOne({ userId: req.userId });
+
         //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
-        const productIndex = user.card.findIndex(
+        const productIndex = card.products.findIndex(
             (item) => item.productId.toString() === productId
         );
 
+        console.log("productIndex", productIndex);
         const product = await Product.findById(productId);
 
         if (productIndex > -1) {
-            //ürün var olduğu için aynı ürünün adetini arttırdık
-            const productItem = user.card[productIndex];
+            //ürün var aynı ürünün adetini arttırdık
+            const productItem = card.products[productIndex];
             productItem.amount += amount;
-            productItem.totalPrice += amount * product.productPrice;
-            user.card[productIndex] = productItem;
+            card.totalPrice += amount * product.productPrice;
+            card.products[productIndex] = productItem;
         } else {
-            console.log("productId", req.body.card);
-
-            user.card.push({
+            card.products.push({
                 productId: productId,
                 amount: amount,
-                totalPrice: product.productPrice * amount,
             });
+            card.totalPrice = amount * product.productPrice;
         }
-        const updateUser = await User.findByIdAndUpdate(req.userId, user, {
+        const updateCard = await Card.findByIdAndUpdate(card._id, card, {
             new: true,
         });
-
-        res.json(updateUser);
+        res.json(updateCard);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -43,9 +42,11 @@ router.patch("/addItem", async(req, res) => {
 
 router.get("/", async(req, res) => {
     try {
+        const card = await Card.find({ userId: req.userId }).populate(
+            "products.productId"
+        );
         console.log(req.userId);
-        const user = await User.findById(req.userId).populate("card.productId");
-        res.json(user);
+        res.json(card);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -53,59 +54,27 @@ router.get("/", async(req, res) => {
 
 router.patch("/clear", async(req, res) => {
     try {
-        const user = await User.findById(req.userId);
+        const card = await Card.findOne({ userId: req.userId });
 
         if (req.query.productId) {
             //spesifik bir elemanı silmek
-            const newCard = user.card.filter(
+            const newCard = card.products.filter(
                 (item) => item.productId.toString() !== req.query.productId
             );
             console.log("newCard", newCard);
-            user.card = newCard;
+            card.products = newCard;
         } else {
             //kullanıcıya ait card silindi/temizlendi
-            user.card = [];
+            card.products = [];
         }
 
-        const updateUser = await User.findByIdAndUpdate(req.userId, user, {
+        const updateCard = await Card.findByIdAndUpdate(card._id, card.products, {
             new: true,
         });
-        res.json(updateUser);
+        res.json(updateCard);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
 module.exports = router;
-
-// router.put("/addItem", async(req, res) => {
-//     const productId = req.body.card[0].productId;
-//     const amount = req.body.card[0].amount;
-
-//     const user = await User.findById(req.userId);
-//     //aynı ürün varsa bize o ürünün indis numarasını verecek yoksa -1 döner
-//     const productIndex = user.card.findIndex(
-//         (item) => item.productId.toString() === productId
-//     );
-
-//     const product = await Product.findById(productId);
-
-//     if (productIndex > -1) {
-//         //ürün var olduğu için aynı ürünün adetini arttırdık
-//         const productItem = user.card[productIndex];
-//         productItem.amount += amount;
-//         productItem.totalPrice += amount * product.productPrice;
-//         user.card[productIndex] = productItem;
-//     } else {
-//         console.log("productId", req.body.card);
-
-//         user.card.push({
-//             productId: productId,
-//             amount: amount,
-//             totalPrice: product.productPrice * amount,
-//         });
-//     }
-
-//     user.save();
-//     res.json(user);
-// });

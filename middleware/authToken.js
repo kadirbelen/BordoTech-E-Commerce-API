@@ -7,13 +7,13 @@ function verifyToken(req, res, next) {
         console.log(token);
         //token var mı?
         if (!token) {
-            res.status(401).send("Access denied. No token provided.");
+            res.status(401).send({ error: "Access denied. No token provided." });
             return;
         }
 
         jwt.verify(token, process.env.JWT_TOKEN, (err, decoded) => {
             req.userId = decoded._id;
-            if (err) res.status(403).json("Token is not valid");
+            if (err) res.status(403).json({ error: "Token is not valid" });
             next();
         });
     } catch (error) {
@@ -24,16 +24,16 @@ function verifyToken(req, res, next) {
 function verifyAndAuthorizationToken(roles) {
     try {
         return (req, res, next) => {
-            verifyToken(req, res, () => {
-                User.findById(req.userId).then((user) => {
-                    //parametre olarak gönderdiğimiz role kullanıcını rolünü içeriyor mu?
-                    if (roles.includes(user.role)) {
-                        next();
-                    } else {
-                        res.status(403).send("You don't have permission for this action");
-                        return;
-                    }
-                });
+            verifyToken(req, res, async() => {
+                const user = await User.findById(req.userId);
+                if (roles.includes(user.role)) {
+                    next();
+                } else {
+                    res
+                        .status(403)
+                        .json({ error: "You don't have permission for this action" });
+                    return;
+                }
             });
         };
     } catch (error) {

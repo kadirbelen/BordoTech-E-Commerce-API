@@ -1,17 +1,22 @@
-const validate = require("../middleware/validationControl");
+const validate = require("../../middleware/validationControl");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 require("dotenv/config");
 
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../../models/User");
 
 router.post("/register", validate("registerSchema"), async(req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     try {
         const user = new User({...req.body, password: hash });
+        //kullanıcımız müşteri ise kayıt oldu andan itibaren sepetini oluşturduk
+        if (user.role === "customer") {
+            const card = new Card({ userId: user._id });
+            await card.save();
+        }
         await user.save();
         //kullanıcı kayıt olduğunda token oluşturduk
         const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
