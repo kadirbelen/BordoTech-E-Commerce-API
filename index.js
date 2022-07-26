@@ -14,10 +14,15 @@ const authToken = require("./middleware/authToken");
 const connection = require("./database/dbConnection");
 const router = require("./routes/user/authRouter");
 const morgan = require("morgan");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger_output.json");
+var cors = require("cors");
 
 const port = 3000;
 const hostname = "127.0.0.1";
-app.use(morgan("dev"));
+
+app.use(cors());
+
 app.use(bodyParser.json());
 app.use("/auth", authRouter);
 app.use("/categories", queryCategoryRouter);
@@ -43,6 +48,9 @@ app.use("/card", authToken.verifyToken, cardRouter);
 app.use("/orders", authToken.verifyToken, queryOrderRouter);
 app.use("/orders", authToken.verifyToken, commandOrderRouter);
 
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 app.listen(port, function() {
     console.log(`Server running at http://${hostname}:${port}/`);
+    console.log(`Server running at http://${hostname}:${port}/doc`);
 });

@@ -2,12 +2,13 @@ const validate = require("../../middleware/validationControl");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 require("dotenv/config");
-
+const Card = require("../../models/Card");
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
 
 router.post("/register", validate("registerSchema"), async(req, res) => {
+    // #swagger.tags = ['Users']
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     try {
@@ -27,6 +28,7 @@ router.post("/register", validate("registerSchema"), async(req, res) => {
 });
 
 router.post("/login", validate("loginSchema"), async(req, res) => {
+    // #swagger.tags = ['Users']
     try {
         const { email, password } = req.body;
 
@@ -44,6 +46,7 @@ router.post("/login", validate("loginSchema"), async(req, res) => {
             return;
         }
         const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN);
+        console.log("token", token);
         res.json({ token: token });
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -3,10 +3,12 @@ const router = express.Router();
 const Card = require("../../models/Card");
 const Product = require("../../models/Product");
 
-router.put("/addItem", async(req, res) => {
+router.patch("/newItem", async(req, res) => {
     try {
         const productId = req.body.products[0].productId;
-        const amount = req.body.products[0].amount;
+        const amount = req.body.products[0].amount ?
+            req.body.products[0].amount :
+            1;
 
         const card = await Card.findOne({ userId: req.userId });
 
@@ -29,7 +31,7 @@ router.put("/addItem", async(req, res) => {
                 productId: productId,
                 amount: amount,
             });
-            card.totalPrice = amount * product.productPrice;
+            card.totalPrice += amount * product.productPrice;
         }
         const updateCard = await Card.findByIdAndUpdate(card._id, card, {
             new: true,
@@ -55,20 +57,20 @@ router.get("/", async(req, res) => {
 router.patch("/clear", async(req, res) => {
     try {
         const card = await Card.findOne({ userId: req.userId });
-
         if (req.query.productId) {
-            //spesifik bir elemanı silmek
             const newCard = card.products.filter(
                 (item) => item.productId.toString() !== req.query.productId
             );
-            console.log("newCard", newCard);
+            const totalPrice = await cardTotalPrice(newCard, req);
             card.products = newCard;
+            card.totalPrice = totalPrice;
         } else {
             //kullanıcıya ait card silindi/temizlendi
             card.products = [];
+            card.totalPrice = 0;
         }
 
-        const updateCard = await Card.findByIdAndUpdate(card._id, card.products, {
+        const updateCard = await Card.findByIdAndUpdate(card._id, card, {
             new: true,
         });
         res.json(updateCard);
@@ -77,4 +79,14 @@ router.patch("/clear", async(req, res) => {
     }
 });
 
+async function cardTotalPrice(card) {
+    var totalPrice = 0;
+    await Promise.all(
+        card.map(async(item) => {
+            const product = await Product.findById(item.productId);
+            totalPrice += item.amount * product.productPrice;
+        })
+    );
+    return totalPrice;
+}
 module.exports = router;

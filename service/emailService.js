@@ -21,6 +21,16 @@ async function sendEmail(req, res) {
             .populate("cardItems.productId");
 
         var mailOptions = null;
+        async function productDetail(array) {
+            var newArray = [];
+            for (let index = 0; index < array.length; index++) {
+                const product = await Product.findById(array[index].productId);
+                console.log("title", product.productTitle);
+                newArray.push(product.productTitle);
+                console.log("newArray", newArray);
+            }
+            return newArray;
+        }
 
         await Promise.all(
             order.map(async(item) => {
@@ -33,6 +43,7 @@ async function sendEmail(req, res) {
                     text: `
         Sipariş Numaranız:${item._id}
         Ürünleriniz:${cardItems}
+        Toplam Fiyat:${item.totalPrice}
         Ödeme Türünüz:${item.payType}
         Address:${item.address}
         `,
@@ -43,28 +54,14 @@ async function sendEmail(req, res) {
         transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
                 console.log(error);
-                res.status(400).json({
-                    error: error.message,
-                });
             } else {
                 console.log("Email sent: " + info.response);
-                res.json({ message: "Email sent" + info.resonse });
+                // res.json({ message: "Email sent" + info.resonse });
             }
         });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
-
-async function productDetail(array) {
-    var newArray = [];
-    for (let index = 0; index < array.length; index++) {
-        const product = await Product.findById(array[index].productId);
-        console.log("title", product.productTitle);
-        newArray.push(product.productTitle);
-        console.log("newArray", newArray);
-    }
-    return newArray;
 }
 
 module.exports = sendEmail;

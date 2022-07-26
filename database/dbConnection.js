@@ -7,7 +7,7 @@ const connection = mongoose.connect(
         if (e) {
             console.log(e);
         } else {
-            console.log("connected");
+            console.log("database connected");
         }
     }
 );

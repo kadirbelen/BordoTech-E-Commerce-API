@@ -31,12 +31,15 @@ router.post("/", async(req, res) => {
             });
             order.save();
             card.products = [];
+            card.totalPrice = 0;
             card.save();
             emailService(req, res);
             return res.json(order);
         } else {
             console.log("sipariş iptali");
-            res.json(`${hasStock} isimli ürün için istenen adette stok yoktur`);
+            res.status(404).json({
+                error: `${hasStock} isimli ürün için istenen adette stok yoktur`,
+            });
         }
     } catch (error) {
         res.status(400).json({ error: error.message });
