@@ -53,7 +53,7 @@
         "/auth/register": {
             "post": {
                 "tags": [
-                    "User"
+                    "Authentication"
                 ],
                 "summary": "users register in the system",
                 "description": "Users register",
@@ -94,7 +94,7 @@
         "/auth/login": {
             "post": {
                 "tags": [
-                    "User"
+                    "Authentication"
                 ],
                 "summary": "users login in the system",
                 "description": "users login with password and email",
@@ -129,7 +129,7 @@
                 }
             }
         },
-        "/categories/": {
+        "/categories": {
             "get": {
                 "tags": [
                     "Category"
@@ -181,7 +181,7 @@
                 }
             }
         },
-        "/products/": {
+        "/products": {
             "get": {
                 "tags": [
                     "Product"
@@ -279,7 +279,7 @@
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "security": [{
                     "bearerAuth": []
                 }],
@@ -342,7 +342,7 @@
                 }
             }
         },
-        "/admin/users/": {
+        "/admin/users": {
             "get": {
                 "security": [{
                     "bearerAuth": []
@@ -488,7 +488,7 @@
                 }
             }
         },
-        "/card/": {
+        "/card": {
             "get": {
                 "security": [{
                     "bearerAuth": []
@@ -548,7 +548,7 @@
                 }
             }
         },
-        "/orders/": {
+        "/orders": {
             "get": {
                 "tags": [
                     "Order"

@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Card = require("../../models/Card");
 const Product = require("../../models/Product");
+const validate = require("../../middleware/validationControl");
 
-router.patch("/newItem", async(req, res) => {
+router.patch("/newItem", validate("cardSchema"), async(req, res) => {
     try {
         const productId = req.body.products[0].productId;
         const amount = req.body.products[0].amount ?

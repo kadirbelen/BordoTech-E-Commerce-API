@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../../models/User");
 const router = express.Router();
+const validate = require("../../middleware/validationControl");
 
 router.get("/", async(req, res) => {
     try {
@@ -18,7 +19,7 @@ router.get("/", async(req, res) => {
     }
 });
 
-router.patch("/:id", async(req, res) => {
+router.patch("/:id", validate("adminOperations"), async(req, res) => {
     //admin kullanıcının rolünü günceller
     try {
         // console.log("role", req.body.role);
